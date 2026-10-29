@@ -1,0 +1,35 @@
+.venv/
+.zephyr-workspace/
+.tools/
+build/
+build-*/
+__pycache__/
+*.pyc
+
+# Local configuration, credentials and machine-specific notes.
+.agents/
+.codex/
+.aws/
+.vs/
+.env
+.env.*
+!.env.example
+docs/environment-status.md
+
+# Generated binaries, logs and downloaded archives.
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.obj
+*.a
+*.lib
+*.exe
+*.dll
+*.pdb
+*.ilk
+*.exp
+*.log
+*.zip
+*.7z

@@ -1,0 +1,58 @@
+/* SPDX-License-Identifier: Apache-2.0 */
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	aliases {
+		scan-button = &cursor_button;
+	};
+	scanner_buttons {
+		compatible = "gpio-keys";
+		cursor_button: cursor_button {
+			gpios = <&gpiob 8 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+			label = "Cursor right";
+		};
+	};
+};
+
+/* Route the hardware console to side-header pins instead of PA9/PA10. */
+&usart0 {
+	current-speed = <115200>;
+	pinctrl-0 = <&console_uart0_remap>;
+	pinctrl-names = "default";
+};
+
+/* SPI1 is also wired to the SD slot. Remove the microSD card for this build. */
+&sdhc0 {
+	status = "disabled";
+};
+
+/* CSN is controlled as a GPIO by the SPI API, not hardware NSS. */
+&pinctrl {
+	console_uart0_remap: console_uart0_remap {
+		group1 {
+			pinmux = <USART0_TX_PB6_RMP>, <USART0_RX_PB7_RMP>;
+		};
+	};
+
+	si24_spi1_default: si24_spi1_default {
+		group1 {
+			pinmux = <SPI1_MISO_PB14_INP>, <SPI1_SCK_PB13_OUT>,
+				 <SPI1_MOSI_PB15_OUT>;
+		};
+	};
+};
+
+&spi1 {
+	status = "okay";
+	pinctrl-0 = <&si24_spi1_default>;
+	cs-gpios = <&gpiob 12 GPIO_ACTIVE_LOW>;
+
+	si24: radio@0 {
+		/* Application-local binding; not an upstream Zephyr radio driver. */
+		compatible = "zephyr,si24r1-scanner";
+		reg = <0>;
+		status = "okay";
+		spi-max-frequency = <1000000>;
+		ce-gpios = <&gpiob 10 GPIO_ACTIVE_HIGH>;
+	};
+};

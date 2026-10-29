@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: Apache-2.0
+description: Application-local SI24R1 receive-only energy detector
+compatible: "zephyr,si24r1-scanner"
+include: spi-device.yaml
+properties:
+  ce-gpios:
+    type: phandle-array
+    required: true
+    description: Active-high receiver enable pin
